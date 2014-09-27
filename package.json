@@ -1,0 +1,11 @@
+{
+  "name": "Twittercism",
+  "description": "Twitter criticisms for movies",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "4.x",
+    "ejs": "1.x",
+    "mongoose": "3.x",
+    "body-parser": "1.x"
+  }
+}
