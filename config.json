@@ -1,3 +1,8 @@
 {
-	"key": "6R1FGQdn3ENtn9fY75H9iDgVq"
+	"twitter": {
+		"consumer_key": "6R1FGQdn3ENtn9fY75H9iDgVq",
+		"consumer_secret": "XvizXwqFiw1A59TZvV7b5VBKQJnFXCj84sOIgyzi6RolnSfPLa",
+		"access_token": "1247503976-bUDCzCDRKdnNrHFFjpBdnLmzPupiLo2NjeI4ZIM",
+		"access_token_secret": "qZdaqb5TMbSHUggScTImMIJFpueRJqYt0AOKSTBfyXeZZ"
+	}
 }

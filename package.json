@@ -6,6 +6,7 @@
     "express": "4.x",
     "ejs": "1.x",
     "mongoose": "3.x",
-    "body-parser": "1.x"
+    "body-parser": "1.x",
+    "twit": "1.x"
   }
 }
