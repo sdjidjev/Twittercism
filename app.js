@@ -99,7 +99,7 @@ function getIMDBMovie(search, callback) {
 		});
 		IMDBSearchRes.on('end', function() {
 			var resultJSON = JSON.parse(result);
-			if (resultJSON.Search.length > 0) {
+			if (resultJSON.Search && resultJSON.Search.length > 0) {
 				http.get('http://www.omdbapi.com/?i='+resultJSON.Search[0].imdbID, function(IMDBMovieRes) {
 					var result = "";
 					IMDBMovieRes.on('data', function (chunk) {
@@ -111,7 +111,8 @@ function getIMDBMovie(search, callback) {
 					});
 				});
 			} else {
-				throw new Error("no movie found for "+search+"!!!");
+				console.log("no movie found for "+search+"!!!");
+				callback({Title:search,Year:'',Rated:'',Released:'',Runtime:'',Genre:'',Director:'',Writer:'',Actors:'',Plot:'',Language:'',Country:'',Awards:'',Poster:'',Metascore:'',imdbRating:'',imdbVotes:'',imdbID:'',Type:'',Response:''});
 			}
 		});
 	});
