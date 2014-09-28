@@ -75,19 +75,27 @@ function twitterSearch(searchQuery,callback,maxID){
 		query.max_id = maxID;
 	}
 	T.get('search/tweets', query, function(err,data,response){
-		var statuses = data.statuses;
-		var lowestTweet;
+		if (data) {
+			var statuses = data.statuses;
+			var lowestTweet;
 
-		for (var i = 0; i < statuses.length; i++) {
-			if (lowestTweet === undefined || statuses[i].id < lowestTweet) {
-				lowestTweet = statuses[i].id;
+			for (var i = 0; i < statuses.length; i++) {
+				if (lowestTweet === undefined || statuses[i].id < lowestTweet) {
+					lowestTweet = statuses[i].id;
+				}
 			}
+			
+			callback({
+				tweets: statuses,
+				lastTweetId: lowestTweet
+			});
+		} else {
+			console.log('Twitter done broke!!!');
+			callback({
+				tweets: [],
+				lastTweetId: 0
+			});
 		}
-		
-		callback({
-			tweets: statuses,
-			lastTweetId: lowestTweet
-		});
 	});
 }
 
@@ -111,7 +119,7 @@ function getIMDBMovie(search, callback) {
 					});
 				});
 			} else {
-				console.log("no movie found for "+search+"!!!");
+				console.log("No movie found for "+search+"!!!");
 				callback({Title:search,Year:'',Rated:'',Released:'',Runtime:'',Genre:'',Director:'',Writer:'',Actors:'',Plot:'',Language:'',Country:'',Awards:'',Poster:'',Metascore:'',imdbRating:'',imdbVotes:'',imdbID:'',Type:'',Response:''});
 			}
 		});
@@ -125,7 +133,6 @@ app.post('/search',function(req,res) {
 	}
 	getIMDBMovie(options.search, function(movieJSON) {
 		var name = movieJSON.Title;
-		console.log(movieJSON);
 		function loop(totalTweets, lastid, depth, callback) {
 			if (depth > 0) {
 				twitterSearch(name, function(data) {
