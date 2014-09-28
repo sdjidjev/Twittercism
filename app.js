@@ -35,10 +35,8 @@ app.get('/',function(req,res){
 function scoreTweets(tweets) {
 	var numPositives = 0;
 	var numNegatives = 0;
-	var choicePositiveTweet = "";
-	var choicePositiveTweetScore = 0;
-	var choiceNegativeTweet = "";
-	var choiceNegativeTweetScore = 0;
+	var positiveTweets = [];
+	var negativeTweets = [];
 	var keys = Object.keys(tweets);
 	for (var i = 0; i < keys.length; i++) {
 		var tweet = tweets[keys[i]];
@@ -54,23 +52,17 @@ function scoreTweets(tweets) {
 				}
 			}
 			if (score < 0) {
-				if (score<choiceNegativeTweetScore){
-					choiceNegativeTweet = tweet.text;
-					choiceNegativeTweetScore = score;
-				}
+				negativeTweets.push(tweet);
 				numNegatives++;
 			} else if (score > 0) {
-				if (score>choicePositiveTweetScore){
-					choicePositiveTweet = tweet.text;
-					choicePositiveTweetScore = score;
-				}
+				positiveTweets.push(tweet);
 				numPositives++;
 			}
 		}
 	}
 	return {
-		choicePositiveTweet: choicePositiveTweet,
-		choiceNegativeTweet: choiceNegativeTweet,
+		positiveTweets: positiveTweets,
+		negativeTweets: negativeTweets,
 		numNegatives: numNegatives,
 		numPositives: numPositives,
 		totalTweets: keys.length,
