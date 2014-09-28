@@ -1,0 +1,24 @@
+body {
+	background-color: #EEFEFF;
+}
+
+.search-column {
+	margin: 0 auto;
+}
+
+.col-lg-3 {
+	height: 100%;
+	background-color: #5bc0de;
+}
+
+.search-column {
+	top: 20px;
+}
+
+.movie-form {
+	margin-bottom: 8px;
+}
+
+.progress {
+	display: none;
+}

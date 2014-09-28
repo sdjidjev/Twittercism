@@ -5,18 +5,32 @@
 		<link href="/css/main.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-		<input id="query" placeholder="Search for a movie!" autofocus>
-		<button id="query-submit">Click for a Twittercism</button>
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6 search-column">
+			<div class="input-group input-group-lg movie-form">
+				<input type="text" class="form-control" id="query" placeholder="Search for a movie" autofocus>
+				<span class="input-group-btn">
+					<button class="btn btn-info" id="query-submit">Get a Twittercism!</button>
+				</span>
+			</div>
+			<div class="progress">
+				<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+			</div>
+		</div>
+		<div class="col-lg-3"></div>
+
 		<div id="results"></div>
 		<div id="negative-tweet"></div>
 		<div id="positive-tweet"></div>
 		<script type="text/javascript">
 			$('#query-submit').click(function(){
+				$('.progress').show();
 				console.log($("#query").val());
 				$.post('/search', {
 					search:$("#query").val(),
-					depth: 8
+					depth: 1
 				},function(data){
+					$('.progress').hide();
 					console.log(data);
 					var score = (data.scoreData.numPositives/(data.scoreData.numPositives+data.scoreData.numNegatives))*100;
 					$('#results').text(score.toFixed(2)+"% "+data.scoreData.totalTweets);
