@@ -18,10 +18,10 @@
 					depth: 8
 				},function(data){
 					console.log(data);
-					var score = (data.numPositives/(data.numPositives+data.numNegatives))*100;
-					$('#results').text(score.toFixed(2)+"% "+data.totalTweets);
-					$('#negative-tweet').text("NEGATIVE: "+data.choiceNegativeTweet+" "+data.numNegatives);
-					$('#positive-tweet').text("POSITIVE: "+data.choicePositiveTweet+" "+data.numPositives);
+					var score = (data.scoreData.numPositives/(data.scoreData.numPositives+data.scoreData.numNegatives))*100;
+					$('#results').text(score.toFixed(2)+"% "+data.scoreData.totalTweets);
+					$('#negative-tweet').text("NEGATIVE: "+data.scoreData.choiceNegativeTweet+" "+data.scoreData.numNegatives);
+					$('#positive-tweet').text("POSITIVE: "+data.scoreData.choicePositiveTweet+" "+data.scoreData.numPositives);
 				}, "json");
 			});
 			$('#query').keyup(function(event){

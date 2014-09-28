@@ -1,3 +1,4 @@
+var http = require('http');
 var config = require('./config.json');
 var positiveWords = require('./positive-words.json');
 var negativeWords = require('./negative-words.json');
@@ -98,27 +99,60 @@ function twitterSearch(searchQuery,callback,maxID){
 	});
 }
 
-app.post('/search',function(req,res){
+function getIMDBMovie(search, callback) {
+	http.get('http://www.omdbapi.com/?s='+search, function(IMDBSearchRes) {
+		var result = "";
+		IMDBSearchRes.on('data', function (chunk) {
+			result += chunk;
+		});
+		IMDBSearchRes.on('end', function() {
+			var resultJSON = JSON.parse(result);
+			if (resultJSON.Search.length > 0) {
+				http.get('http://www.omdbapi.com/?i='+resultJSON.Search[0].imdbID, function(IMDBMovieRes) {
+					var result = "";
+					IMDBMovieRes.on('data', function (chunk) {
+						result += chunk;
+					});
+					IMDBMovieRes.on('end', function() {
+						var resultJSON = JSON.parse(result);
+						callback(resultJSON);
+					});
+				});
+			} else {
+				throw new Error("no movie found for "+search+"!!!");
+			}
+		});
+	});
+}
+
+app.post('/search',function(req,res) {
 	var options = req.body;
 	if (isNaN(options.depth) || options.depth < 1) {
 		options.depth = 1;
 	}
-	function loop(totalTweets, lastid, depth, callback) {
-		if (depth > 0) {
-			twitterSearch(options.search, function(data) {
-				for (var i = 0; i < data.tweets.length; i++) {
-					if (!totalTweets[data.tweets[i].id]) {
-						totalTweets[data.tweets[i].id] = data.tweets[i];
+	getIMDBMovie(options.search, function(movieJSON) {
+		var name = movieJSON.Title;
+		console.log(movieJSON);
+		function loop(totalTweets, lastid, depth, callback) {
+			if (depth > 0) {
+				twitterSearch(name, function(data) {
+					for (var i = 0; i < data.tweets.length; i++) {
+						if (!totalTweets[data.tweets[i].id]) {
+							totalTweets[data.tweets[i].id] = data.tweets[i];
+						}
 					}
-				}
-				loop(totalTweets, data.lastTweetId, depth-1, callback);
-			}, lastid);
-		} else {
-			callback(totalTweets);
+					loop(totalTweets, data.lastTweetId, depth-1, callback);
+				}, lastid);
+			} else {
+				callback(totalTweets);
+			}
 		}
-	}
-	loop({}, undefined, options.depth, function(data) {
-		res.send(scoreTweets(data));
+		loop({}, undefined, options.depth, function(data) {
+			res.send({
+				scoreData: scoreTweets(data),
+				movieJSON: movieJSON
+			});
+		});
 	});
 });
 
