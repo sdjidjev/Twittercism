@@ -8,7 +8,9 @@
 	<body>
 		<div class="col-xs-3">
 			<div class="outer-tweet-container">
-				Positive Tweets:
+				<div class="tweet-header">
+					Positive Tweets:
+				</div>
 				<div id="positive-tweets" class="tweet-container"></div>
 			</div>
 		</div>
@@ -38,7 +40,9 @@
 		</div>
 		<div class="col-xs-3">	
 			<div class="outer-tweet-container">
-				Negative Tweets:
+				<div class="tweet-header">
+					Negative Tweets:
+				</div>
 				<div id="negative-tweets" class="tweet-container"></div>
 			</div>
 		</div>
@@ -52,7 +56,7 @@
 				console.log($("#query").val());
 				$.post('/search', {
 					search:$("#query").val(),
-					depth: 5
+					depth: 1
 				},function(data){
 					$('.progress').hide();
 					$('.outer-tweet-container').show();
@@ -62,18 +66,10 @@
 					$('#positive-tweets').empty();
 					$('#negative-tweets').empty();
 					for (var i=0;i<data.scoreData.positiveTweets.length;i++){
-						var endText = '';
-						if (i!=data.scoreData.positiveTweets.length-1){
-							endText = '<hr>';
-						}
-						$('#positive-tweets').append('<div class="tweet">'+data.scoreData.positiveTweets[i].user.screen_name+": "+data.scoreData.positiveTweets[i].text+'</div>'+endText);
+						$('#positive-tweets').append('<div class="tweet">'+data.scoreData.positiveTweets[i].user.screen_name+": "+data.scoreData.positiveTweets[i].text+'</div>');
 					}
 					for (var i=0;i<data.scoreData.negativeTweets.length;i++){
-						var endText = '';
-						if (i!=data.scoreData.negativeTweets.length-1){
-							endText = '<hr>';
-						}
-						$('#negative-tweets').append('<div class="tweet">'+data.scoreData.negativeTweets[i].user.screen_name+": "+data.scoreData.negativeTweets[i].text+'</div>'+endText);
+						$('#negative-tweets').append('<div class="tweet">'+data.scoreData.negativeTweets[i].user.screen_name+": "+data.scoreData.negativeTweets[i].text+'</div>');
 					}
 					$('#movie-title').text(data.movieJSON.Title);
 					$('#movie-poster').attr('src',data.movieJSON.Poster);

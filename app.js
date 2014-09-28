@@ -32,7 +32,7 @@ app.get('/',function(req,res){
 	res.render('index');
 });
 
-function scoreTweets(tweets) {
+function scoreTweets(tweets,name) {
 	var numPositives = 0;
 	var numNegatives = 0;
 	var positiveTweets = [];
@@ -41,7 +41,9 @@ function scoreTweets(tweets) {
 	for (var i = 0; i < keys.length; i++) {
 		var tweet = tweets[keys[i]];
 		var score = 0;
-		if (tweet.text && tweet.text.substring(0,4) != "RT @") {
+		if (tweet.text && 
+			tweet.text.substring(0,4) != "RT @" && 
+			tweet.user.screen_name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
 			var textarr = tweet.text.toLowerCase().split(" ");
 			for (var j = 0; j < textarr.length; j++) {
 				if (positiveWords[textarr[j]]) {
@@ -149,7 +151,7 @@ app.post('/search',function(req,res) {
 		}
 		loop({}, undefined, options.depth, function(data) {
 			res.send({
-				scoreData: scoreTweets(data),
+				scoreData: scoreTweets(data,name),
 				movieJSON: movieJSON
 			});
 		});
