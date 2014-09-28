@@ -3,7 +3,7 @@
 		<script type="text/javascript" src="/js/third_party/jquery-2.1.1.min.js"></script>
 	</head>
 	<body>
-		<input id="query" placeholder="Search for a movie!" focus>
+		<input id="query" placeholder="Search for a movie!" autofocus>
 		<button id="query-submit">Click for a Twittercism</button>
 		<div id="results"></div>
 		<div id="negative-tweet"></div>
@@ -13,21 +13,13 @@
 				console.log($("#query").val());
 				$.post('/search', {
 					search:$("#query").val(),
-					depth: 5
+					depth: 8
 				},function(data){
 					console.log(data);
-					// var numNegatives = 0;
-					// var numPositives = 0;
-					// var totalTweets = 0;
-					// for (var i = 0; i < data.length; i++) {
-					// 	numNegatives += data[i].numNegatives;
-					// 	numPositives += data[i].numPositives;
-					// 	totalTweets += data[i].total;
-					// }
-					// var score = (numPositives/(numPositives+numNegatives))*100;
-					// $('#results').text(score.toFixed(2)+"% "+totalTweets);
-					// $('#negative-tweet').text("NEGATIVE: "+data[0].negativeTweet+" "+numNegatives);
-					// $('#positive-tweet').text("POSITIVE: "+data[0].positiveTweet+" "+numPositives);
+					var score = (data.numPositives/(data.numPositives+data.numNegatives))*100;
+					$('#results').text(score.toFixed(2)+"% "+data.totalTweets);
+					$('#negative-tweet').text("NEGATIVE: "+data.choiceNegativeTweet+" "+data.numNegatives);
+					$('#positive-tweet').text("POSITIVE: "+data.choicePositiveTweet+" "+data.numPositives);
 				}, "json");
 			});
 			$('#query').keyup(function(event){

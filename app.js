@@ -38,10 +38,12 @@ function scoreTweets(tweets) {
 	var choicePositiveTweetScore = 0;
 	var choiceNegativeTweet = "";
 	var choiceNegativeTweetScore = 0;
-	for (var i = 0; i < statuses.length; i++) {
+	var keys = Object.keys(tweets);
+	for (var i = 0; i < keys.length; i++) {
+		var tweet = tweets[keys[i]];
 		var score = 0;
-		if (statuses[i].text) {
-			var textarr = statuses[i].text.toLowerCase().split(" ");
+		if (tweet.text) {
+			var textarr = tweet.text.toLowerCase().split(" ");
 			for (var j = 0; j < textarr.length; j++) {
 				if (positiveWords[textarr[j]]) {
 					score++;
@@ -52,19 +54,26 @@ function scoreTweets(tweets) {
 			}
 			if (score < 0) {
 				if (score<choiceNegativeTweetScore){
-					choiceNegativeTweet = statuses[i].text;
+					choiceNegativeTweet = tweet.text;
 					choiceNegativeTweetScore = score;
 				}
 				numNegatives++;
 			} else if (score > 0) {
 				if (score>choicePositiveTweetScore){
-					choicePositiveTweet = statuses[i].text;
+					choicePositiveTweet = tweet.text;
 					choicePositiveTweetScore = score;
 				}
 				numPositives++;
 			}
 		}
 	}
+	return {
+		choicePositiveTweet: choicePositiveTweet,
+		choiceNegativeTweet: choiceNegativeTweet,
+		numNegatives: numNegatives,
+		numPositives: numPositives,
+		totalTweets: keys.length,
+	};
 }
 
 function twitterSearch(searchQuery,callback,maxID){
@@ -91,29 +100,26 @@ function twitterSearch(searchQuery,callback,maxID){
 
 app.post('/search',function(req,res){
 	var options = req.body;
-	if (options.depth > 0) {
-		function loop(totalTweets, lastid, depth, callback) {
-			if (depth > 0) {
-				twitterSearch(options.search, function(data) {
-					for (var i = 0; i < data.tweets.length; i++) {
-						if (!totalTweets[data.tweets[i].id]) {
-							totalTweets[data.tweets[i].id] = data.tweets[i];
-						}
-					}
-					loop(totalTweets, data.lastTweetId, depth-1, callback);
-				});
-			} else {
-				callback(totalTweets);
-			}
-		}
-		loop({}, undefined, options.depth, function(data) {
-			res.send(data);
-		});
-	} else {
-		twitterSearch(options.search, function(data) {
-			res.send([data]);
-		});
+	if (isNaN(options.depth) || options.depth < 1) {
+		options.depth = 1;
 	}
+	function loop(totalTweets, lastid, depth, callback) {
+		if (depth > 0) {
+			twitterSearch(options.search, function(data) {
+				for (var i = 0; i < data.tweets.length; i++) {
+					if (!totalTweets[data.tweets[i].id]) {
+						totalTweets[data.tweets[i].id] = data.tweets[i];
+					}
+				}
+				loop(totalTweets, data.lastTweetId, depth-1, callback);
+			}, lastid);
+		} else {
+			callback(totalTweets);
+		}
+	}
+	loop({}, undefined, options.depth, function(data) {
+		res.send(scoreTweets(data));
+	});
 });
 
 app.listen(3000);
