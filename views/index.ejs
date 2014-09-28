@@ -1,12 +1,21 @@
 <html>
 	<head>
 		<script type="text/javascript" src="/js/third_party/jquery-2.1.1.min.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
 		<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="/css/main.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-		<div class="col-lg-3"></div>
-		<div class="col-lg-6 search-column">
+		<div class="col-xs-3">
+			<div class="outer-tweet-container">
+				Positive Tweets:
+				<div id="positive-tweets" class="tweet-container"></div>
+			</div>
+		</div>
+		<div class="col-xs-6 search-column">
+			<div class="title">
+				Twittercism
+			</div>
 			<div class="input-group input-group-lg movie-form">
 				<input type="text" class="form-control" id="query" placeholder="Search for a movie" autofocus>
 				<span class="input-group-btn">
@@ -16,35 +25,61 @@
 			<div class="progress">
 				<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
 			</div>
-			<div id="results"></div>
-			<div class="col-lg-6">
-				Negative Tweets:
-				<div id="negative-tweets"></div>
-			</div>
-			<div class="col-lg-6">
-				Positive Tweets:
-				<div id="positive-tweets"></div>
+			<div class="col-xs-12 movie-info">
+				<div id="movie-title"></div>
+				<div class="col-xs-6">
+					<img id="movie-poster" src="">
+				</div>
+				<div class="col-xs-6">
+					<div id="results"></div>
+					<div id="imdb-rating"></div>	
+				</div>
 			</div>
 		</div>
-		<div class="col-lg-3"></div>
+		<div class="col-xs-3">	
+			<div class="outer-tweet-container">
+				Negative Tweets:
+				<div id="negative-tweets" class="tweet-container"></div>
+			</div>
+		</div>
 
 		<div id="results"></div>
-		<div id="negative-tweet"></div>
-		<div id="positive-tweet"></div>
 		<script type="text/javascript">
 			$('#query-submit').click(function(){
 				$('.progress').show();
+				$('.outer-tweet-container').hide();
+				$('.movie-info').hide();
 				console.log($("#query").val());
 				$.post('/search', {
 					search:$("#query").val(),
-					depth: 1
+					depth: 5
 				},function(data){
 					$('.progress').hide();
-					console.log(data);
+					$('.outer-tweet-container').show();
+					$('.movie-info').show();
 					var score = (data.scoreData.numPositives/(data.scoreData.numPositives+data.scoreData.numNegatives))*100;
 					$('#results').text(score.toFixed(0)+"%");
-					$('#negative-tweets').text("NEGATIVE: "+data.scoreData.choiceNegativeTweet+" "+data.scoreData.numNegatives);
-					$('#positive-tweets').text("POSITIVE: "+data.scoreData.choicePositiveTweet+" "+data.scoreData.numPositives);
+					$('#positive-tweets').empty();
+					$('#negative-tweets').empty();
+					for (var i=0;i<data.scoreData.positiveTweets.length;i++){
+						var endText = '';
+						if (i!=data.scoreData.positiveTweets.length-1){
+							endText = '<hr>';
+						}
+						$('#positive-tweets').append('<div class="tweet">'+data.scoreData.positiveTweets[i].user.screen_name+": "+data.scoreData.positiveTweets[i].text+'</div>'+endText);
+					}
+					for (var i=0;i<data.scoreData.negativeTweets.length;i++){
+						var endText = '';
+						if (i!=data.scoreData.negativeTweets.length-1){
+							endText = '<hr>';
+						}
+						$('#negative-tweets').append('<div class="tweet">'+data.scoreData.negativeTweets[i].user.screen_name+": "+data.scoreData.negativeTweets[i].text+'</div>'+endText);
+					}
+					$('#movie-title').text(data.movieJSON.Title);
+					$('#movie-poster').attr('src',data.movieJSON.Poster);
+					$('#imdb-rating').text('IMDB Rating: '+data.movieJSON.imdbRating);
+
+
 				}, "json");
 			});
 			$('#query').keyup(function(event){

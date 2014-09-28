@@ -41,7 +41,7 @@ function scoreTweets(tweets) {
 	for (var i = 0; i < keys.length; i++) {
 		var tweet = tweets[keys[i]];
 		var score = 0;
-		if (tweet.text) {
+		if (tweet.text && tweet.text.substring(0,4) != "RT @") {
 			var textarr = tweet.text.toLowerCase().split(" ");
 			for (var j = 0; j < textarr.length; j++) {
 				if (positiveWords[textarr[j]]) {
@@ -70,7 +70,7 @@ function scoreTweets(tweets) {
 }
 
 function twitterSearch(searchQuery,callback,maxID){
-	var query = {q: searchQuery, count: 100};
+	var query = {q: searchQuery, count: 100, result_type: 'recent'};
 	if (maxID !== undefined) {
 		query.max_id = maxID;
 	}

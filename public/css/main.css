@@ -1,24 +1,73 @@
 body {
-	background-color: #EEFEFF;
-}
-
-.search-column {
-	margin: 0 auto;
-}
-
-.col-lg-3 {
-	height: 100%;
 	background-color: #5bc0de;
 }
 
+.col-lg-3 {
+	min-height: 100%;
+}
+
+.title {
+	text-align: center;
+	font-family: 'Lobster', cursive;
+	color: #1D4566;
+	font-size: 8rem;
+	margin-bottom: 1.5rem;
+}
+
 .search-column {
-	top: 20px;
+	padding-top: 1rem;
+	padding-bottom: 20px;
+	margin: 0 auto;
+	background-color: #EEFEFF;
+	min-height: 100%;
+}
+
+.movie-info {
+	display: none;
 }
 
 .movie-form {
 	margin-bottom: 8px;
 }
 
+#movie-poster{
+	height: 40%;
+}
+
+#results {
+	text-align: center;
+	font-size: 8rem;
+}
+#imdb-rating{
+	text-align: center;
+	font-size: 2rem;
+}
+
+.outer-tweet-container {
+	font-size: 2rem;
+	display: none;
+}
+
 .progress {
 	display: none;
+}
+.tweet {
+	padding: 5px;
+	background-color: #FFFEFF;
+	border: 1px solid #888;
+	border-radius: 5px;
+}
+
+.tweet-container {
+	height: 100%;
+	overflow: auto;
+}
+
+#movie-title {
+	text-align: center;
+	font-size: 3rem;
+}
+
+#movie-poster{
+	height: 41%;
 }
