@@ -56,7 +56,7 @@
 				console.log($("#query").val());
 				$.post('/search', {
 					search:$("#query").val(),
-					depth: 1
+					depth: 10
 				},function(data){
 					$('.progress').hide();
 					$('.outer-tweet-container').show();

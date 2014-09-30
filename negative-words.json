@@ -8,6 +8,7 @@
 	"lame": true,
 	"suck": true,
 	"sucks": true,
+	"sucked": true,
 	"crap": true,
 	"hideous": true,
 	"shameful": true,
@@ -17,6 +18,9 @@
 	"forgettable": true,
 	"garbage": true,
 	"trash": true,
-	"never": true,
-	"hated": true
+	"hated": true,
+	"dumb": true,
+	"dumbest": true,
+	"plotholes": true,
+	"meh": true
 }

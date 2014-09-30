@@ -32,6 +32,8 @@ app.get('/',function(req,res){
 	res.render('index');
 });
 
+var cache = {};
+
 function scoreTweets(tweets,name) {
 	var numPositives = 0;
 	var numNegatives = 0;
@@ -44,7 +46,8 @@ function scoreTweets(tweets,name) {
 		if (tweet.text && 
 			tweet.text.substring(0,4) != "RT @" && 
 			tweet.user.screen_name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
-			var textarr = tweet.text.toLowerCase().split(" ");
+			var tweetText = tweet.text.replace(/[.,!?]/g, '');
+			var textarr = tweetText.toLowerCase().split(" ");
 			for (var j = 0; j < textarr.length; j++) {
 				if (positiveWords[textarr[j]]) {
 					score++;
@@ -135,26 +138,33 @@ app.post('/search',function(req,res) {
 	}
 	getIMDBMovie(options.search, function(movieJSON) {
 		var name = movieJSON.Title;
-		function loop(totalTweets, lastid, depth, callback) {
-			if (depth > 0) {
-				twitterSearch(name, function(data) {
-					for (var i = 0; i < data.tweets.length; i++) {
-						if (!totalTweets[data.tweets[i].id]) {
-							totalTweets[data.tweets[i].id] = data.tweets[i];
-						}
-					}
-					loop(totalTweets, data.lastTweetId, depth-1, callback);
-				}, lastid);
-			} else {
-				callback(totalTweets);
-			}
+
+		if (cache[movieJSON.imdbID]){
+			res.send(cache[movieJSON.imdbID]);
 		}
-		loop({}, undefined, options.depth, function(data) {
-			res.send({
-				scoreData: scoreTweets(data,name),
-				movieJSON: movieJSON
+		else {
+			function loop(totalTweets, lastid, depth, callback) {
+				if (depth > 0) {
+					twitterSearch(name, function(data) {
+						for (var i = 0; i < data.tweets.length; i++) {
+							if (!totalTweets[data.tweets[i].id]) {
+								totalTweets[data.tweets[i].id] = data.tweets[i];
+							}
+						}
+						loop(totalTweets, data.lastTweetId, depth-1, callback);
+					}, lastid);
+				} else {
+					callback(totalTweets);
+				}
+			}
+			loop({}, undefined, options.depth, function(data) {
+				cache[movieJSON.imdbID] = {
+					scoreData: scoreTweets(data,name),
+					movieJSON: movieJSON
+				};
+				res.send(cache[movieJSON.imdbID]);
 			});
-		});
+		}
 	});
 });
 
