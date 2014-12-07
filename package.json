@@ -2,11 +2,18 @@
   "name": "Twittercism",
   "description": "Twitter criticisms for movies",
   "version": "0.0.1",
+  "scripts": {
+    "start": "node app.js",
+  },
   "dependencies": {
     "express": "4.x",
     "ejs": "1.x",
     "mongoose": "3.x",
     "body-parser": "1.x",
     "twit": "1.x"
+  },
+   "engines": {
+    "node": "0.10.x",
+    "npm": "1.4.x"
   }
 }
